@@ -1,0 +1,29 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  labels:
+    app: webhook-server
+  name: pod-injector
+  namespace: webhook-demo
+webhooks:
+- name: pod-injector.nicktriller.com
+  failurePolicy: Fail
+  objectSelector:
+    matchLabels:
+      inject: "true"
+  rules:
+  - operations: ["CREATE"]
+    apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    scope: "Namespaced"
+  admissionReviewVersions: ["v1", "v1beta1"]
+  sideEffects: None
+  clientConfig:
+    # base64-encoded PEM bundle containing the CA that signed the webhook's service certificate
+    caBundle: "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlDeXpDQ0FiTUNGRVRlS3JGOVRjdlVXQU1hK0JhV3pNUmVxK0loTUEwR0NTcUdTSWIzRFFFQkN3VUFNQm94DQpHREFXQmdOVkJBTU1EMWRsWW1odmIyc2dSR1Z0YnlCRFFUQWVGdzB5TURBMU1UWXhNVFE0TXpkYUZ3MHlNREEyDQpNVFV4TVRRNE16ZGFNQ294S0RBbUJnTlZCQU1NSDNkbFltaHZiMnN0YzJWeWRtVnlMbmRsWW1odmIyc3RaR1Z0DQpieTV6ZG1Nd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUN3YVpMTGk1OExBck94DQp0MEVNaS9xSzNRaEFqRmV3WGdTdGFjVXhZbzdLa3dpWEpSV3JoR2Z3SjFDN0lxenY3ZHhOWUVvQmtCV1NiN2w2DQpXU0VtWitsektaRnI3cFZDc3F0VjMwVHA1MlR4RnFRek9vNzB4THpwNkJ5Z09tZVhyeTMrQkNLZDR6Y0FzVU56DQpYNGFlNjRHa1U4ZGw0WWVRYXB6a0ZtN2xPRVNRZFZjZmZwUFRmbGdvd3haSERJYW8rdjM2UUxsbGh2ekRLSkxVDQoxK0pTY25wc2RMZ0JrbldyN3l3V3VYZWIyNGcrWTBCbVNuVnh6V0U1eDMvUXhmR2lRbWV5cC9BaVpHU2hGOEg5DQpuMXh5UkpFcjFvUG5kK0k0S2JOelhtZWcydFJTZzlMV0trZGg4OXV3ZWpLT0EvRnExWXdla21XTk5MUEJEckc2DQpXcHA4aUFUSkFnTUJBQUV3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUVLMGovejhIMFFmTlFiUUpOaVVyZE9FDQplM0N5UjBHcmlBMTg0VjdBNUs3NjV0RlhlSk9aaHZkeFlJcWxrM21pbnBiZHk2WW1acXFld1RvY0lrdEszbVZ6DQpzZUdjd29IODBMc1JxTXhSc29PdUcwMVV6L1F1YllBN0ZycG4vaWJrenJmRFhhT1dwS3lrUTBzNDNlemg4S3Q4DQp1alk0UWJTR284OXZ3WnYxRGlGVVJjNzR4ZFZLckZwRW9RTWcvaEpDWlRnc0FRQ1R4VG4rUXNzZ3hsSXMybU1yDQpPNUY3TldNSXpuTDdiSUpQUmJHVTh3eVdvZFR1ZDFqdThoWmlCUmZuL2Q2dUtLNXBnZHpPdHRRU0gxMnBHTWVMDQorNTZFL00rWHpUMzdYOEYxL1BKeUhKZzJaWmQ0UHRwc25RQ3k0cEFOcVFpTW9YOVBOZ3dGaW41K3N4YXp4VGM9DQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tDQo="
+    service:
+      namespace: webhook-demo
+      name: webhook-server
+      path: /
+      port: 443

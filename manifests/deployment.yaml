@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webhook-server
+  name: webhook-server
+  namespace: webhook-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-server
+  template:
+    metadata:
+      labels:
+        app: webhook-server
+    spec:
+      containers:
+      - image: nicktriller/mutating-webook-admission-server-demo:latest
+        imagePullPolicy: Always
+        name: server
+        env:
+        - name: FLASK_RUN_PORT
+          value: "443"
+        - name: WEBHOOK_SERVER_CERT_KEY
+          value: /app/certificate/webhook-server-tls.key
+        - name: WEBHOOK_SERVER_CERT_CRT
+          value: /app/certificate/webhook-server-tls.crt
+        volumeMounts:
+        - name: certificate
+          mountPath: /app/certificate
+      volumes:
+      - name: certificate
+        secret:
+          secretName: webhook-server-certificate
